@@ -1,22 +1,34 @@
 // src/Login.js
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AppContext } from '../utils/AppContext';
 
 const Login = () => {
+  const { authToken, setAuthToken, client } = useContext(AppContext)
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();
     // Here you can add authentication logic
-    axios.defaults.xsrfCookieName = 'csrftoken'
-    axios.defaults.xsrfHeaderName = 'X-CSRFToken'
-    axios.defaults.withCredentials = true
+    // axios.defaults.xsrfCookieName = 'csrftoken'
+    // axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+    // axios.defaults.withCredentials = true
 
-   axios.post('http://127.0.0.1:8000/user/login/',{
+   client.post('/user/login/',{
     email: email,
     password: password,
-   }).then((response)=>console.log(response.data))
+   }).then((response)=>{
+    console.log(response.data)
+    if(response.status === 200){
+
+      localStorage.setItem('token', response.data.access)
+      setAuthToken(response.data.access)
+      navigate('/')
+    }
+  })
   };
 
   return (
