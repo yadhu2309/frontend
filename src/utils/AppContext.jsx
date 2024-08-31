@@ -1,12 +1,12 @@
 import axios from "axios";
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 export const AppContext = createContext();
 
 function AppProvider({ children }) {
   axios.defaults.xsrfCookieName = "csrftoken";
   axios.defaults.xsrfHeaderName = "X-CSRFToken";
-  axios.defaults.withCredentials = true;
+//   axios.defaults.withCredentials = true;
 
   const client = axios.create({
     baseURL: "http://127.0.0.1:8000",
@@ -14,6 +14,20 @@ function AppProvider({ children }) {
   let [authToken, setAuthToken] = useState(() =>
     localStorage.getItem("token") ? localStorage.getItem("token") : null
   );
+
+  const [events, setEvents] = useState([]);
+  useEffect(() => {
+    client
+      .get("/tasks/", {
+        headers: {
+          Authorization: `Bearer ${authToken}`, // Add the token to the Authorization header
+        },
+      })
+      .then((response) => {
+        console.log("events1", response.data);
+        setEvents(response.data);
+      });
+  }, []);
 
   const logout = () => {
     client
@@ -31,7 +45,9 @@ function AppProvider({ children }) {
         client,
         logout,
         authToken,
-        setAuthToken
+        setAuthToken,
+        events,
+        setEvents,
       }}
     >
       {children}

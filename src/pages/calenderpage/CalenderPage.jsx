@@ -11,21 +11,14 @@ import { Padding } from "@mui/icons-material";
 
 const localizer = momentLocalizer(moment);
 function Calender() {
-  const { client, authToken } = useContext(AppContext);
-  const [events, setEvents] = useState([]);
-  useEffect(() => {
-    client
-      .get("/tasks/", {
-        headers: {
-          Authorization: `Bearer ${authToken}`, // Add the token to the Authorization header
-        },
-      })
-      .then((response) => {
-        console.log("events1", response.data);
-        setEvents(response.data);
-      });
-  }, []);
+  const { client, authToken, events } = useContext(AppContext);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
+ // Handle event selection
+ const handleSelectEvent = (event) => {
+  setSelectedEvent(event);
+  console.log('Selected event:', event);
+};
   return (
     <div>
       <SideNav />
@@ -41,10 +34,13 @@ function Calender() {
               return new Date(event.end);
             }}
             style={{ height: "65vh", width: "70vw" }}
+            onSelectEvent={handleSelectEvent}
+
           />
         </Grid>
         <Grid item xs={4}>
-          <EventForm />
+          <EventForm selectedEvent={ selectedEvent } set
+           />
         </Grid>
       </Grid>
     </div>

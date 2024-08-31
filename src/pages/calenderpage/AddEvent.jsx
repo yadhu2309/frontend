@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import './AddEvent.css'
+import { AppContext } from '../../utils/AppContext';
 
-function EventForm() {
+function EventForm({ selectedEvent }) {
   const [title, setTitle] = useState('');
   const [date, setDate] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [error, setError] = useState('');
+
+  const { client, authToken, events, setEvents } = useContext(AppContext)
 
   // Get today's date in YYYY-MM-DD format
   const today = new Date().toISOString().split('T')[0];
@@ -44,11 +47,75 @@ function EventForm() {
     } else {
       // Process the form data
       console.log({ startTime, endTime });
+
+      // Data to be sent in the POST request
+const data = {
+    title: title,
+    date: date,
+    start: startTime,
+    end: endTime
+  };
+  const event_data = {
+    title: data.title,
+    start: new Date(`${data.date} ${data.start}`+":00"),
+    end: new Date(`${data.date} ${data.end}`+":00")
+
+  }
+  
+  
+  // Configuration for the POST request, including headers
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${authToken}`,
     }
-    
   };
   
-  
+  // Making the POST request
+  client.post('/tasks/', data, config)
+    .then(response => {
+      // Handle the response data
+      console.log('Task created successfully:', response.data);
+      setEvents([...events, event_data])
+
+    })
+    .catch(error => {
+      // Handle errors
+      console.error('Error creating task:', error);
+    });
+  }
+    
+  };
+  const hanedleDelete = () => {
+
+    // Send a DELETE request
+    client.delete(`/tasks/${selectedEvent.id}`).then(response => {
+        // Handle success
+        console.log('Response:', response.data);
+        setEvents((prevEvents) => prevEvents.filter(item=>item.id !== selectedEvent.id))
+      })
+      .catch(error => {
+        // Handle error
+        console.error('Error:', error);
+      });
+
+  }
+  useEffect(()=>{
+    if (selectedEvent) {
+        setTitle(selectedEvent.title);
+        const start = splite_datetime_string(selectedEvent.start)
+        const end = splite_datetime_string(selectedEvent.end)
+        setDate(start.date)
+        setStartTime(start.time)
+        setEndTime(end.time)
+      }
+      
+  }, [selectedEvent])
+
+  const splite_datetime_string = (dateTimeString) => {
+    const [date, time] = dateTimeString.split('T');
+    return {date, time};    
+  }
 
   return (
     <form>
@@ -94,6 +161,10 @@ function EventForm() {
       {error !== '' && <p style={{ color: 'red' }}>{error}</p>}
 
       <button type="submit" onClick={handleSubmit}>Add Event</button>
+      <button className='update' onClick={handleSubmit}>Update</button>
+
+      <button className='delete' onClick={hanedleDelete}>Delete</button>
+
     </form>
   );
 }

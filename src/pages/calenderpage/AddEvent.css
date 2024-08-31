@@ -23,8 +23,9 @@ form {
     box-sizing: border-box;
   }
   
-  button {
+  button[type=submit] {
     padding: 10px 20px;
+    margin-right: 5px;
     background-color: #28a745;
     color: white;
     border: none;
@@ -32,7 +33,25 @@ form {
     cursor: pointer;
   }
   
-  button:hover {
+  button[type=submit]:hover {
     background-color: #218838;
   }
   
+.update{
+    padding: 10px 20px;
+    margin-right: 5px;
+    background-color: #a78c28;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.delete{
+    padding: 10px 20px;
+    margin-right: 5px;
+    background-color: #a91c1c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
