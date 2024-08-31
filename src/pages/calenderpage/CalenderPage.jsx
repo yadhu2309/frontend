@@ -6,10 +6,8 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import axios from "axios";
 import { AppContext } from "../../utils/AppContext";
 import EventForm from "./AddEvent";
-import Grid from '@mui/material/Grid2';
+import Grid from "@mui/material/Grid2";
 import { Padding } from "@mui/icons-material";
-
-
 
 const localizer = momentLocalizer(moment);
 function Calender() {
@@ -31,26 +29,24 @@ function Calender() {
   return (
     <div>
       <SideNav />
-      <Grid container spacing={2} style={{padding: '0px 0px 0px 30px'}}>
+      <Grid container spacing={2} style={{ padding: "0px 0px 0px 30px" }}>
         <Grid item xs={8}>
-        <Calendar
-          localizer={localizer}
-          events={events}
-          startAccessor={(event) => {
-            return new Date(event.start);
-          }}
-          endAccessor={(event) => {
-            return new Date(event.end);
-          }}
-          style={{ height: "65vh", width: "70vw" }}
-        />
+          <Calendar
+            localizer={localizer}
+            events={events}
+            startAccessor={(event) => {
+              return new Date(event.start);
+            }}
+            endAccessor={(event) => {
+              return new Date(event.end);
+            }}
+            style={{ height: "65vh", width: "70vw" }}
+          />
         </Grid>
         <Grid item xs={4}>
-        <EventForm />
+          <EventForm />
         </Grid>
-        </Grid>
-        
-       
+      </Grid>
     </div>
   );
 }

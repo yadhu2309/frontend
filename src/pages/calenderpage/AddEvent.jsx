@@ -1,25 +1,57 @@
 import React, { useState } from 'react';
 import './AddEvent.css'
 
-function EventForm({ onSubmit }) {
+function EventForm() {
   const [title, setTitle] = useState('');
   const [date, setDate] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
+  const [error, setError] = useState('');
+
+  // Get today's date in YYYY-MM-DD format
+  const today = new Date().toISOString().split('T')[0];
+
+  const handleStartTimeChange = (e) => {
+    const selectedStartTime = e.target.value;
+    setStartTime(selectedStartTime);
+
+    // If the end time is earlier than the start time, clear it
+    if (endTime && selectedStartTime >= endTime) {
+      setEndTime('');
+      setError('End time must be later than the start time.');
+    } else {
+      setError('');
+    }
+  };
+
+  const handleEndTimeChange = (e) => {
+
+    const selectedEndTime = e.target.value;
+    console.log(startTime && selectedEndTime <= startTime, selectedEndTime, startTime)
+
+    if (startTime && selectedEndTime <= startTime) {
+    setError('End time must be later than the start time.');
+    } else {
+      setEndTime(selectedEndTime);
+      setError('');
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const eventData = {
-      title,
-      date,
-      startTime,
-      endTime
-    };
-    onSubmit(eventData);
+    if (error !== '') {
+      alert('Please fix the errors before submitting the form.');
+    } else {
+      // Process the form data
+      console.log({ startTime, endTime });
+    }
+    
   };
+  
+  
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form>
       <div>
         <label>Title:</label>
         <input
@@ -36,6 +68,7 @@ function EventForm({ onSubmit }) {
           value={date}
           onChange={(e) => setDate(e.target.value)}
           required
+          min={today} 
         />
       </div>
       <div>
@@ -43,7 +76,7 @@ function EventForm({ onSubmit }) {
         <input
           type="time"
           value={startTime}
-          onChange={(e) => setStartTime(e.target.value)}
+          onChange={handleStartTimeChange}
           required
         />
       </div>
@@ -52,11 +85,15 @@ function EventForm({ onSubmit }) {
         <input
           type="time"
           value={endTime}
-          onChange={(e) => setEndTime(e.target.value)}
+          onChange={handleEndTimeChange}
           required
+        //   disabled={!startTime} // Disable end time input until a start time is selected
+
         />
       </div>
-      <button type="submit">Add Event</button>
+      {error !== '' && <p style={{ color: 'red' }}>{error}</p>}
+
+      <button type="submit" onClick={handleSubmit}>Add Event</button>
     </form>
   );
 }
