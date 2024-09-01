@@ -1,24 +1,73 @@
 import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import SideNav from "../../components/Dashboard";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import axios from "axios";
 import { AppContext } from "../../utils/AppContext";
 import EventForm from "./AddEvent";
 import Grid from "@mui/material/Grid2";
-import { Padding } from "@mui/icons-material";
+import EventModal from "../../components/CoompletedEventModal";
 
 const localizer = momentLocalizer(moment);
 function Calender() {
-  const { client, authToken, events } = useContext(AppContext);
+  const { client, authToken, events, setEvents, clearToken } =
+    useContext(AppContext);
   const [selectedEvent, setSelectedEvent] = useState(null);
 
-  // Handle event selection
+  //  completedEvent modal
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const navigate = useNavigate();
+
+  // // Handle event
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
-    console.log("Selected event:", event);
+    handleOpen();
+    // const eventUpdate = events.map(evnt=>
+    //   evnt.id === event.id ? {...evnt, completed: true}: evnt
+    // )
+    // setEvents(eventUpdate)
   };
+  const eventStyle = (event) => {
+    const style = {
+      backgroundColor: event.completed ? "green" : "#3174ad",
+      color: event.completed ? "#808080" : "#fff",
+      border: "none",
+    };
+    return { style };
+  };
+  useEffect(() => {
+    const fetchEvent = async () => {
+      try {
+        const response = await client.get("/tasks/", {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
+        console.log("events1", response.data);
+        setEvents(response.data);
+      } catch (error) {
+        // Handle any errors that occur during the request
+        console.log(error);
+        if (error.status === 401) {
+          // If the user is not authenticated, redirect them to the login page
+          clearToken();
+          navigate("/login");
+        }
+
+        console.error(
+          "Error fetching tasks:",
+          error.response ? error.response.data : error.message
+        );
+      }
+    };
+    fetchEvent();
+  }, []);
+
   return (
     <div>
       <SideNav />
@@ -35,6 +84,7 @@ function Calender() {
             }}
             style={{ height: "65vh", width: "70vw" }}
             onSelectEvent={handleSelectEvent}
+            eventPropGetter={eventStyle}
           />
         </Grid>
         <Grid item xs={4}>
@@ -44,6 +94,14 @@ function Calender() {
           />
         </Grid>
       </Grid>
+      <EventModal
+        open={open}
+        setOpen={setOpen}
+        handleClose={handleClose}
+        handleOpen={handleOpen}
+        selectedEvent={selectedEvent}
+        setSelectedEvent={setSelectedEvent}
+      />
     </div>
   );
 }

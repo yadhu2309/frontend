@@ -1,19 +1,24 @@
 import React, { useContext, useEffect, useState } from "react";
 import "./AddEvent.css";
 import { AppContext } from "../../utils/AppContext";
+import { useNavigate } from "react-router-dom";
 
 function EventForm({ selectedEvent, setSelectedEvent }) {
-  
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [error, setError] = useState("");
 
-  const { client, authToken, events, setEvents } = useContext(AppContext);
+  const [eventError, setEventError] = useState({});
 
-   // configuration for the request, including headers
-   const config = {
+  const navigate = useNavigate();
+
+  const { client, authToken, events, setEvents, clearToken } =
+    useContext(AppContext);
+
+  // configuration for the request, including headers
+  const config = {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${authToken}`,
@@ -23,6 +28,25 @@ function EventForm({ selectedEvent, setSelectedEvent }) {
   // today's date in YYYY-MM-DD format
   const today = new Date().toISOString().split("T")[0];
 
+  const formValidation = () => {
+    let newError = {};
+    if (!title.trim()) {
+      newError.title = "Title is required";
+    }
+    if (!date) {
+      newError.date = "Date is required";
+    }
+    if (!startTime) {
+      newError.startTime = "Start time is required";
+    }
+    if (!endTime) {
+      newError.endTime = "End time is required";
+    }
+    setEventError(newError);
+    // return false if no errors
+    return Object.keys(newError).length !== 0;
+  };
+
   // handles the change to the start time field
   const handleStartTimeChange = (e) => {
     const selectedStartTime = e.target.value;
@@ -30,7 +54,6 @@ function EventForm({ selectedEvent, setSelectedEvent }) {
 
     // if the end time is earlier than the start time, clear it
     if (endTime && selectedStartTime >= endTime) {
-
       // clear end time
       setEndTime("");
       // sets error message
@@ -56,14 +79,15 @@ function EventForm({ selectedEvent, setSelectedEvent }) {
     }
   };
 
-
   // handle submit
   // create new event
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (error !== "") {
-      alert("Please fix the errors before submitting the form.");
+    if (error !== "" || formValidation()) {
+      return;
+      // alert("Please fix the errors before submitting the form.");
     } else {
+      setEventError({});
 
       // data to be sent in the POST request
       const data = {
@@ -80,8 +104,6 @@ function EventForm({ selectedEvent, setSelectedEvent }) {
         end: new Date(`${data.date} ${data.end}` + ":00"),
       };
 
-     
-
       // Making the POST request
       client
         .post("/tasks/", data, config)
@@ -91,116 +113,30 @@ function EventForm({ selectedEvent, setSelectedEvent }) {
           setEvents([...events, event_data]);
 
           // reset event form by clearing and deselect selected event
-          resetEventForm()
+          resetEventForm();
         })
         .catch((error) => {
           // Handle errors
           console.error("Error creating task:", error);
+          if (error.status === 401) {
+            // If the user is not authenticated, redirect them to the login page
+            clearToken();
+            navigate("/login");
+          }
         });
     }
   };
 
-  // handle the delete
-  const hanedleDelete = (e) => {
-    e.preventDefault()
-    // Send a DELETE request to remov selected event
-    client
-      .delete(`/tasks/${selectedEvent.id}`)
-      .then((response) => {
-        // Handle success
-        console.log("Response:", response.data);
-
-        // update the event list by removing the selectted event 
-        setEvents((prevEvents) =>
-          prevEvents.filter((item) => item.id !== selectedEvent.id)
-        );
-        // reset event form by clearing and deselect selected event
-        resetEventForm()
-      })
-      .catch((error) => {
-        // Handle error
-        console.error("Error:", error);
-      });
-  };
-
-  // updates the event list by replacing the selected event with updated event
-  const updateEvent = (updatedEvent) => {
-
-    const updatedEvents = events.map(evt => 
-    evt.id === selectedEvent.id ? updatedEvent : evt
-    )
-
-    setEvents(updatedEvents)
-  }
-
-  // handles the edit event
-  const handleEdit = async (e) => {
-    e.preventDefault()
-
-    // data to be sent in the PUT request
-    const data = {
-      title: title,
-      date: date,
-      start: startTime,
-      end: endTime,
-    };
-
-    // event data for updating the event state
-    const event_data = {
-      title: data.title,
-      start: new Date(`${data.date} ${data.start}` + ":00"),
-      end: new Date(`${data.date} ${data.end}` + ":00"),
-    };
-
-    try {
-      // send a put request to update event
-      const response = await client.put(`/tasks/${selectedEvent.id}`, data, config);
-      console.log('Response:', response.data);
-
-      // updates the event list by replacing the selected event with updated event
-      updateEvent(event_data)
-
-     // reset event form by clearing and deselect selected event
-      resetEventForm()
-      
-  } catch (error) {
-      console.error('Error updating data:', error.response ? error.response.data : error.message);
-  }
-
-  };
-
-  // populates the evnt form field with event details
-  // if the event is selected
-  useEffect(() => {
-    if (selectedEvent) {
-      setTitle(selectedEvent.title);
-      const start = splite_datetime_string(selectedEvent.start);
-      const end = splite_datetime_string(selectedEvent.end);
-      setDate(start.date);
-      setStartTime(start.time);
-      setEndTime(end.time);
-    }
-  }, [ selectedEvent ]);
-
   // reset event form by clearing all input fields
   // deselect selected event
   const resetEventForm = () => {
-
     setTitle("");
     setDate("");
-    setEndTime("")
+    setEndTime("");
     setStartTime("");
 
     // Deselect the currently selected event
-    setSelectedEvent('')
-  }
-
-  // splits datetime string into date and time
-  const splite_datetime_string = (dateTimeString) => {
-    const [date, time] = dateTimeString.split("T");
-
-    // return "2024-09-01T12:30:45" becomes { date: "2024-09-01", time: "12:30:45" }.
-    return { date, time }; 
+    setSelectedEvent("");
   };
 
   return (
@@ -214,6 +150,7 @@ function EventForm({ selectedEvent, setSelectedEvent }) {
           required
         />
       </div>
+      {eventError.title && <p className="error-message">{eventError.title}</p>}
       <div>
         <label>Date:</label>
         <input
@@ -224,6 +161,8 @@ function EventForm({ selectedEvent, setSelectedEvent }) {
           min={today}
         />
       </div>
+      {eventError.date && <p className="error-message">{eventError.date}</p>}
+
       <div>
         <label>Start Time:</label>
         <input
@@ -233,6 +172,10 @@ function EventForm({ selectedEvent, setSelectedEvent }) {
           required
         />
       </div>
+      {eventError.startTime && (
+        <p className="error-message">{eventError.startTime}</p>
+      )}
+
       <div>
         <label>End Time:</label>
         <input
@@ -242,30 +185,19 @@ function EventForm({ selectedEvent, setSelectedEvent }) {
           required
         />
       </div>
-      {error !== "" && <p style={{ color: "red" }}>{error}</p>}
+      {eventError.endTime && (
+        <p className="error-message">{eventError.endTime}</p>
+      )}
+
+      {error !== "" && <p className="error-message">{error}</p>}
 
       <button
         type="submit"
-        disabled={selectedEvent ? true : false}
         onClick={handleSubmit}
       >
         Add Event
       </button>
-      <button
-        className="update"
-        disabled={selectedEvent ? false : true}
-        onClick={handleEdit}
-      >
-        Edit
-      </button>
-
-      <button
-        className="delete"
-        disabled={selectedEvent ? false : true}
-        onClick={hanedleDelete}
-      >
-        Delete
-      </button>
+      
     </form>
   );
 }

@@ -6,7 +6,7 @@ export const AppContext = createContext();
 function AppProvider({ children }) {
   axios.defaults.xsrfCookieName = "csrftoken";
   axios.defaults.xsrfHeaderName = "X-CSRFToken";
-//   axios.defaults.withCredentials = true;
+  //   axios.defaults.withCredentials = true;
 
   const client = axios.create({
     baseURL: "http://127.0.0.1:8000",
@@ -16,6 +16,14 @@ function AppProvider({ children }) {
   );
 
   const [events, setEvents] = useState([]);
+
+  
+
+  const clearToken = () => {
+    localStorage.getItem("token") && localStorage.removeItem("token")
+    authToken && setAuthToken('')
+
+  }
  
   const logout = () => {
     client
@@ -26,7 +34,7 @@ function AppProvider({ children }) {
         console.log(response);
       });
   };
-
+  
   return (
     <AppContext.Provider
       value={{
@@ -36,6 +44,7 @@ function AppProvider({ children }) {
         setAuthToken,
         events,
         setEvents,
+        clearToken,
       }}
     >
       {children}
