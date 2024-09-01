@@ -3,6 +3,7 @@ import {BrowserRouter as Router,Route,Routes} from 'react-router-dom'
 import Homepage from './pages/Homepage';
 import Calender from './pages/calenderpage/CalenderPage';
 import Login from './pages/Login';
+import PrivateRoute from './utils/PrivateRoute';
 
 function App() {
   return (
@@ -10,11 +11,16 @@ function App() {
       <Router>
         <Routes>
           <Route path='/' element={
-            <Homepage/>
+            <PrivateRoute>
+              <Homepage/>
+            </PrivateRoute>
           } exact
           />
            <Route path='/calender' element={
-            <Calender/>
+            <PrivateRoute>
+              <Calender/>
+            </PrivateRoute>
+
           } 
           />
           <Route path='/login' element={
