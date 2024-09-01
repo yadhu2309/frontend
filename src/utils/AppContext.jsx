@@ -16,19 +16,7 @@ function AppProvider({ children }) {
   );
 
   const [events, setEvents] = useState([]);
-  useEffect(() => {
-    client
-      .get("/tasks/", {
-        headers: {
-          Authorization: `Bearer ${authToken}`, // Add the token to the Authorization header
-        },
-      })
-      .then((response) => {
-        console.log("events1", response.data);
-        setEvents(response.data);
-      });
-  }, []);
-
+ 
   const logout = () => {
     client
       .post("/logout", {

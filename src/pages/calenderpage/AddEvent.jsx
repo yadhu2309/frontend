@@ -3,6 +3,7 @@ import "./AddEvent.css";
 import { AppContext } from "../../utils/AppContext";
 
 function EventForm({ selectedEvent, setSelectedEvent }) {
+  
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
   const [startTime, setStartTime] = useState("");
