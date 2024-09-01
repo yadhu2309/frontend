@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import "./AddEvent.css";
 import { AppContext } from "../../utils/AppContext";
 
-function EventForm({ selectedEvent }) {
+function EventForm({ selectedEvent, setSelectedEvent }) {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
   const [startTime, setStartTime] = useState("");
@@ -11,7 +11,7 @@ function EventForm({ selectedEvent }) {
 
   const { client, authToken, events, setEvents } = useContext(AppContext);
 
-   // Configuration for the POST request, including headers
+   // configuration for the request, including headers
    const config = {
     headers: {
       "Content-Type": "application/json",
@@ -19,53 +19,60 @@ function EventForm({ selectedEvent }) {
     },
   };
 
-  // Get today's date in YYYY-MM-DD format
+  // today's date in YYYY-MM-DD format
   const today = new Date().toISOString().split("T")[0];
 
+  // handles the change to the start time field
   const handleStartTimeChange = (e) => {
     const selectedStartTime = e.target.value;
     setStartTime(selectedStartTime);
 
-    // If the end time is earlier than the start time, clear it
+    // if the end time is earlier than the start time, clear it
     if (endTime && selectedStartTime >= endTime) {
+
+      // clear end time
       setEndTime("");
+      // sets error message
       setError("End time must be later than the start time.");
     } else {
+      // clear the existing error
       setError("");
     }
   };
 
+  // handles the changes  to the end time field
   const handleEndTimeChange = (e) => {
     const selectedEndTime = e.target.value;
-    console.log(
-      startTime && selectedEndTime <= startTime,
-      selectedEndTime,
-      startTime
-    );
 
     if (startTime && selectedEndTime <= startTime) {
+      // sets error message
       setError("End time must be later than the start time.");
     } else {
+      // update the time
       setEndTime(selectedEndTime);
+      // clear the existing error
       setError("");
     }
   };
 
+
+  // handle submit
+  // create new event
   const handleSubmit = (e) => {
     e.preventDefault();
     if (error !== "") {
       alert("Please fix the errors before submitting the form.");
     } else {
-      // Process the form data
-      console.log({ startTime, endTime });
 
-      // Data to be sent in the POST request
+      // data to be sent in the POST request
       const data = {
         title: title,
         date: date,
         start: startTime,
         end: endTime,
       };
+
+      // event data for updating the event state
       const event_data = {
         title: data.title,
         start: new Date(`${data.date} ${data.start}` + ":00"),
@@ -81,6 +88,9 @@ function EventForm({ selectedEvent }) {
           // Handle the response data
           console.log("Task created successfully:", response.data);
           setEvents([...events, event_data]);
+
+          // reset event form by clearing and deselect selected event
+          resetEventForm()
         })
         .catch((error) => {
           // Handle errors
@@ -88,16 +98,23 @@ function EventForm({ selectedEvent }) {
         });
     }
   };
-  const hanedleDelete = () => {
-    // Send a DELETE request
+
+  // handle the delete
+  const hanedleDelete = (e) => {
+    e.preventDefault()
+    // Send a DELETE request to remov selected event
     client
       .delete(`/tasks/${selectedEvent.id}`)
       .then((response) => {
         // Handle success
         console.log("Response:", response.data);
+
+        // update the event list by removing the selectted event 
         setEvents((prevEvents) =>
           prevEvents.filter((item) => item.id !== selectedEvent.id)
         );
+        // reset event form by clearing and deselect selected event
+        resetEventForm()
       })
       .catch((error) => {
         // Handle error
@@ -105,6 +122,7 @@ function EventForm({ selectedEvent }) {
       });
   };
 
+  // updates the event list by replacing the selected event with updated event
   const updateEvent = (updatedEvent) => {
 
     const updatedEvents = events.map(evt => 
@@ -114,9 +132,11 @@ function EventForm({ selectedEvent }) {
     setEvents(updatedEvents)
   }
 
+  // handles the edit event
   const handleEdit = async (e) => {
     e.preventDefault()
-    // Data to be sent in the PUT request
+
+    // data to be sent in the PUT request
     const data = {
       title: title,
       date: date,
@@ -124,6 +144,7 @@ function EventForm({ selectedEvent }) {
       end: endTime,
     };
 
+    // event data for updating the event state
     const event_data = {
       title: data.title,
       start: new Date(`${data.date} ${data.start}` + ":00"),
@@ -131,16 +152,24 @@ function EventForm({ selectedEvent }) {
     };
 
     try {
+      // send a put request to update event
       const response = await client.put(`/tasks/${selectedEvent.id}`, data, config);
       console.log('Response:', response.data);
+
+      // updates the event list by replacing the selected event with updated event
       updateEvent(event_data)
+
+     // reset event form by clearing and deselect selected event
+      resetEventForm()
+      
   } catch (error) {
       console.error('Error updating data:', error.response ? error.response.data : error.message);
   }
-    console.log("edit", data);
 
   };
 
+  // populates the evnt form field with event details
+  // if the event is selected
   useEffect(() => {
     if (selectedEvent) {
       setTitle(selectedEvent.title);
@@ -150,11 +179,27 @@ function EventForm({ selectedEvent }) {
       setStartTime(start.time);
       setEndTime(end.time);
     }
-  }, [selectedEvent]);
+  }, [ selectedEvent ]);
 
+  // reset event form by clearing all input fields
+  // deselect selected event
+  const resetEventForm = () => {
+
+    setTitle("");
+    setDate("");
+    setEndTime("")
+    setStartTime("");
+
+    // Deselect the currently selected event
+    setSelectedEvent('')
+  }
+
+  // splits datetime string into date and time
   const splite_datetime_string = (dateTimeString) => {
     const [date, time] = dateTimeString.split("T");
-    return { date, time };
+
+    // return "2024-09-01T12:30:45" becomes { date: "2024-09-01", time: "12:30:45" }.
+    return { date, time }; 
   };
 
   return (

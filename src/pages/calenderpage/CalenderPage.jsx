@@ -14,11 +14,11 @@ function Calender() {
   const { client, authToken, events } = useContext(AppContext);
   const [selectedEvent, setSelectedEvent] = useState(null);
 
- // Handle event selection
- const handleSelectEvent = (event) => {
-  setSelectedEvent(event);
-  console.log('Selected event:', event);
-};
+  // Handle event selection
+  const handleSelectEvent = (event) => {
+    setSelectedEvent(event);
+    console.log("Selected event:", event);
+  };
   return (
     <div>
       <SideNav />
@@ -35,12 +35,13 @@ function Calender() {
             }}
             style={{ height: "65vh", width: "70vw" }}
             onSelectEvent={handleSelectEvent}
-
           />
         </Grid>
         <Grid item xs={4}>
-          <EventForm selectedEvent={ selectedEvent } set
-           />
+          <EventForm
+            selectedEvent={selectedEvent}
+            setSelectedEvent={setSelectedEvent}
+          />
         </Grid>
       </Grid>
     </div>
