@@ -9,11 +9,16 @@ function AppProvider({ children }) {
   //   axios.defaults.withCredentials = true;
 
   const client = axios.create({
-    baseURL: "http://127.0.0.1:8000",
+    baseURL: "http://3.24.168.183",
   });
   let [authToken, setAuthToken] = useState(() =>
     localStorage.getItem("token") ? localStorage.getItem("token") : null
   );
+
+  let [refreshToken, setRefreshToken] = useState(() =>
+    localStorage.getItem("refresh") ? localStorage.getItem("refresh") : null
+  );
+  
 
   const [events, setEvents] = useState([]);
 
@@ -21,8 +26,10 @@ function AppProvider({ children }) {
 
   const clearToken = () => {
     localStorage.getItem("token") && localStorage.removeItem("token")
-    authToken && setAuthToken('')
+    authToken && setAuthToken(null)
 
+    localStorage.getItem("refresh") && localStorage.removeItem("refresh")
+    refreshToken && setRefreshToken(null)
   }
  
   const logout = () => {
@@ -45,6 +52,8 @@ function AppProvider({ children }) {
         events,
         setEvents,
         clearToken,
+        refreshToken,
+        setRefreshToken
       }}
     >
       {children}

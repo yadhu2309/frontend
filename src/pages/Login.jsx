@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../utils/AppContext';
 
 const Login = () => {
-  const { authToken, setAuthToken, client } = useContext(AppContext)
+  const { authToken, setAuthToken, client, setRefreshToken } = useContext(AppContext)
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -25,7 +25,10 @@ const Login = () => {
     if(response.status === 200){
 
       localStorage.setItem('token', response.data.access)
+      localStorage.setItem('refresh', response.data.refresh)
       setAuthToken(response.data.access)
+      setRefreshToken(response.data.refresh)
+      
       navigate('/')
     }
   })
