@@ -2,6 +2,7 @@
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../utils/AppContext';
+import OtpModal from '../components/OtpModal';
 
 const Login = () => {
   const { setAuthToken, client, } = useContext(AppContext)
@@ -9,6 +10,11 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const [error, setError] = useState()
+
+  // otp modal
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -69,10 +75,19 @@ const Login = () => {
         <button type="submit" style={styles.button}>
           Login
         </button>
+        <button disabled={email?false:true} onClick={(e)=>{e.preventDefault();handleOpen()}}  style={styles.otp}>
+          OTP Login
+        </button>
         <button onClick={(e)=>{e.preventDefault();navigate('/signup')}} style={styles.buttonSignup}>
           Signup
         </button>
       </form>
+      <OtpModal
+      open={open}
+      handleClose={handleClose}
+      handleOpen={handleOpen}
+      email={email}
+      setError={setError}/>
     </div>
   );
 };
@@ -115,6 +130,16 @@ const styles = {
     width: '100%',
     padding: '10px',
     backgroundColor: 'green',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '3px',
+    cursor: 'pointer',
+  },
+  otp: {
+    marginTop:'5px',
+    width: '100%',
+    padding: '10px',
+    backgroundColor: '#eb1a97',
     color: '#fff',
     border: 'none',
     borderRadius: '3px',
