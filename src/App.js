@@ -4,6 +4,7 @@ import Homepage from './pages/Homepage';
 import Calender from './pages/calenderpage/CalenderPage';
 import Login from './pages/Login';
 import PrivateRoute from './utils/PrivateRoute';
+import Signup from './pages/Signup';
 
 function App() {
   return (
@@ -25,6 +26,9 @@ function App() {
           />
           <Route path='/login' element={
             <Login/>
+          } />
+          <Route path='/signup' element={
+            <Signup/>
           } 
           />
         </Routes>

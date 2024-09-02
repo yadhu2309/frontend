@@ -62,6 +62,9 @@ const Login = () => {
         <button type="submit" style={styles.button}>
           Login
         </button>
+        <button onClick={(e)=>{e.preventDefault();navigate('/signup')}} style={styles.buttonSignup}>
+          Signup
+        </button>
       </form>
     </div>
   );
@@ -95,6 +98,16 @@ const styles = {
     width: '100%',
     padding: '10px',
     backgroundColor: '#007BFF',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '3px',
+    cursor: 'pointer',
+  },
+  buttonSignup: {
+    marginTop:'5px',
+    width: '100%',
+    padding: '10px',
+    backgroundColor: 'green',
     color: '#fff',
     border: 'none',
     borderRadius: '3px',
