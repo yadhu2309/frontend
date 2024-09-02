@@ -9,7 +9,6 @@ import { AppContext } from "../../utils/AppContext";
 import EventForm from "./AddEvent";
 import Grid from "@mui/material/Grid2";
 import EventModal from "../../components/CoompletedEventModal";
-import Snackbar from '@mui/material/Snackbar';
 
 const localizer = momentLocalizer(moment);
 function Calender() {
@@ -27,7 +26,6 @@ function Calender() {
   // // Handle event
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
-    console.log('selected ', event)
     handleOpen();
     // const eventUpdate = events.map(evnt=>
     //   evnt.id === event.id ? {...evnt, completed: true}: evnt
@@ -51,7 +49,7 @@ function Calender() {
             Authorization: `Bearer ${authToken}`,
           },
         });
-        console.log("events1", response.data);
+        console.log("events1");
         setEvents(response.data);
       } catch (error) {
         // Handle any errors that occur during the request

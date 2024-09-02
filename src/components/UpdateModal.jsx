@@ -128,7 +128,6 @@ export default function UpdateModal({ selectedEvent, setSelectedEvent, setOpen,o
     
       const extractDateTime = (dateTime) => {
         const date = new Date(dateTime);
-    console.log(date)
         const year = date.getFullYear();
         const month = date.getMonth() + 1; // Months are 0-based
         const day = date.getDate();
@@ -157,7 +156,6 @@ export default function UpdateModal({ selectedEvent, setSelectedEvent, setOpen,o
      
       // 2024-09-03T13:57:00 extract date and time
      
-        console.log('useefect', selectedEvent.start)
       start = splite_datetime_string(selectedEvent.start);
       end = splite_datetime_string(selectedEvent.end);
       
@@ -217,7 +215,7 @@ export default function UpdateModal({ selectedEvent, setSelectedEvent, setOpen,o
         config
       );
 
-      console.log("Response:");
+      console.log("updated succesfully:");
        // toast message showing
        setSnackbarOpen(true)
        // snackbar message

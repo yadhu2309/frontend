@@ -12,7 +12,7 @@ const style = {
   transform: "translate(-50%, -50%)",
   width: 400,
   bgcolor: "background.paper",
-  border: "2px solid #000",
+  // border: "2px solid #000",
   boxShadow: 24,
   p: 4,
 };
@@ -37,7 +37,7 @@ export default function EventModal({
 
   const handleConfirm = async () => {
     // data to send the patch request
-    console.log('selected event',selectedEvent)
+    console.log('selected event')
     let data = {
         completed: true
     }

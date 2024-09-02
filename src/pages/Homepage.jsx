@@ -16,7 +16,6 @@ const navigate = useNavigate()
             Authorization: `Bearer ${authToken}`,
           },
         });
-        console.log("events1", response.data);
         setEvents(response.data);
       } catch (error) {
         // Handle any errors that occur during the request

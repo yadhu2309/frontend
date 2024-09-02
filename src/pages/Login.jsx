@@ -1,14 +1,14 @@
 // src/Login.js
-import axios from 'axios';
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../utils/AppContext';
 
 const Login = () => {
-  const { authToken, setAuthToken, client, setRefreshToken } = useContext(AppContext)
+  const { setAuthToken, client, } = useContext(AppContext)
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const [error, setError] = useState()
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -28,7 +28,13 @@ const Login = () => {
       setAuthToken(response.data.access)
       // setRefreshToken(response.data.refresh)
       
+      setError('')
       navigate('/')
+    }
+  }).catch((error)=>{
+    console.log(error.response)
+    if(error.response.status === 401){
+      setError('Invalid Email or Password')
     }
   })
   };
@@ -59,6 +65,7 @@ const Login = () => {
             required
           />
         </div>
+        {error&&<p className='error-message'>{error}</p>}
         <button type="submit" style={styles.button}>
           Login
         </button>

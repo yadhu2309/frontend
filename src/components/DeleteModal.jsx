@@ -55,7 +55,7 @@ const hanedleDelete = async (e) => {
 
       .then((response) => {
         // Handle success
-        console.log("Response:", response.data);
+        console.log("deleted successfully");
          // toast message showing
       setSnackbarOpen(true)
       // snackbar message

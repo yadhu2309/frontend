@@ -61,7 +61,7 @@ const newError = {}
         confirm_password: formData.password
       });
 
-      console.log(response.data)
+      console.log('registered successfully')
       navigate('/login')
       // Handle success
     //   setSuccess("Signup successful!");
@@ -100,7 +100,6 @@ const newError = {}
     <div style={styles.container}>
 
       <form onSubmit={handleSubmit} style={styles.form}>
-        {error&&console.log(error)}
       <h2>Signup</h2>
                 <div style={styles.inputGroup}>
 
