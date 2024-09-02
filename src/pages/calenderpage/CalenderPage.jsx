@@ -9,6 +9,7 @@ import { AppContext } from "../../utils/AppContext";
 import EventForm from "./AddEvent";
 import Grid from "@mui/material/Grid2";
 import EventModal from "../../components/CoompletedEventModal";
+import Snackbar from '@mui/material/Snackbar';
 
 const localizer = momentLocalizer(moment);
 function Calender() {
@@ -38,6 +39,7 @@ function Calender() {
       backgroundColor: event.completed ? "green" : "#3174ad",
       color: event.completed ? "#808080" : "#fff",
       border: "none",
+      // cursor: event.completed ? 'no-drop': 'pointer',
     };
     return { style };
   };
@@ -68,12 +70,27 @@ function Calender() {
     };
     fetchEvent();
   }, []);
+  const boxStyle = {
+    width: '20px',
+    height: '20px',
+    backgroundColor: '#00FF00', // Green color
+    border: '1px solid #000', // Black border
+    marginRight: '5px'
+  };
 
+   
   return (
     <div>
       <SideNav />
+     
+      <section style={{display:'flex', justifyContent:'center'}}>
+
+        <div style={boxStyle}></div> Completed Events
+        </section>
       <Grid container spacing={2} style={{ padding: "0px 0px 0px 30px" }}>
+     
         <Grid item xs={8}>
+         
           <Calendar
             localizer={localizer}
             events={events}
@@ -89,6 +106,7 @@ function Calender() {
           />
         </Grid>
         <Grid item xs={4}>
+          <h2>Add Events</h2>
           <EventForm
             selectedEvent={selectedEvent}
             setSelectedEvent={setSelectedEvent}

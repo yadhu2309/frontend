@@ -80,7 +80,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 export default function SideNav() {
 
-  // const { logout } = React.useContext(AppContext)
+  const { clearToken } = React.useContext(AppContext)
 
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
@@ -102,11 +102,15 @@ export default function SideNav() {
     label: 'Calender',
     url: '/calender'
   }]
+  const handleLogout = () => {
+    clearToken()
+    navigate('/login')
+  }
 
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open}>
+      <AppBar position="fixed" style={{backgroundColor:'#ad42f5'}} open={open}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -123,7 +127,7 @@ export default function SideNav() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            Task
+            EVENTS
           </Typography>
         </Toolbar>
       </AppBar>
@@ -149,11 +153,11 @@ export default function SideNav() {
         <List>
           {menuItem.map(({label, url}, index) => (
             <ListItem key={label} disablePadding>
-              <ListItemButton>
+              <ListItemButton onClick={()=>navigate(url)}>
                 {/* <ListItemIcon>
                   {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                 </ListItemIcon> */}
-                <ListItemText primary={label} onClick={()=>navigate(url)} />
+                <ListItemText primary={label}  />
               </ListItemButton>
             </ListItem>
           ))}
@@ -161,7 +165,7 @@ export default function SideNav() {
         <Divider />
         <List>
             <ListItem disablePadding>
-              <ListItemButton>
+              <ListItemButton onClick={handleLogout}>
                 <ListItemText primary='Log Out' />
                <LogoutIcon/>
               </ListItemButton>

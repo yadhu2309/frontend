@@ -82,7 +82,20 @@ export default function EventModal({
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Event Completion
           </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+         {selectedEvent && selectedEvent.completed?
+         <><Typography id="modal-modal-description" sx={{ mt: 2 }}>
+        Event titled '{selectedEvent&&selectedEvent.title}' completed
+       </Typography>
+       <div style={{ display: "flex", justifyContent: "end" }}>
+         <button
+           className="delete"
+           // disabled={selectedEvent ? false : true}
+           onClick={handleClose}
+         >
+           Close
+         </button>
+        
+       </div></>:<><Typography id="modal-modal-description" sx={{ mt: 2 }}>
             Have you completed or attended the event '{selectedEvent&&selectedEvent.title}'
           </Typography>
           <div style={{ display: "flex", justifyContent: "end" }}>
@@ -100,7 +113,8 @@ export default function EventModal({
             >
               Yes
             </button>
-          </div>
+          </div></>
+            }
         </Box>
       </Modal>
     </div>

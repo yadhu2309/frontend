@@ -75,6 +75,7 @@ export default function TableEvent({ rows }) {
               </TableCell>
               <TableCell align="right">
                 <button
+                className="update1"
                   onClick={() => {
                     handleSelectEvent(index);
                     handleOpen(true)
@@ -85,6 +86,7 @@ export default function TableEvent({ rows }) {
               </TableCell>
               <TableCell align="right">
                 <button
+                className="delete1"
                   onClick={() => {
                     handleSelectEvent(index);
                     handleModalOpen()

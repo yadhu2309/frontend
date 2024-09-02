@@ -5,6 +5,8 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { AppContext } from '../utils/AppContext';
 import { useNavigate } from 'react-router-dom';
+import { Snackbar } from "@mui/material";
+
 
 const style = {
   position: 'absolute',
@@ -13,7 +15,7 @@ const style = {
   transform: 'translate(-50%, -50%)',
   width: 400,
   bgcolor: 'background.paper',
-  border: '2px solid #000',
+  // border: '2px solid #000',
   boxShadow: 24,
   p: 4,
 };
@@ -21,6 +23,19 @@ const style = {
 export default function DeleteConfirmModal({open, setOpen, handleClose, handleOpen, selectedEvent, setSelectedEvent}) {
     const { client, authToken, events, setEvents, clearToken } =
     React.useContext(AppContext);
+
+     //snackbar open
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false)
+  // snackbar message
+  const [snackbarMessage, setSnackbarMessage] = React.useState('')
+  // snackbar close
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setSnackbarOpen(false);
+  };
     
 const navigate = useNavigate()
     // configuration for the request, including headers
@@ -41,6 +56,10 @@ const hanedleDelete = async (e) => {
       .then((response) => {
         // Handle success
         console.log("Response:", response.data);
+         // toast message showing
+      setSnackbarOpen(true)
+      // snackbar message
+      setSnackbarMessage("Event Deleted successfully");
 
         // update the event list by removing the selectted event
         setEvents((prevEvents) =>
@@ -63,6 +82,14 @@ const hanedleDelete = async (e) => {
 
   return (
     <div>
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        open={snackbarOpen}
+        autoHideDuration={2000}
+        onClose={handleSnackbarClose}
+        message={snackbarMessage}
+        key={'top' + 'center'}
+      />
       <Modal
         open={open}
         onClose={handleClose}

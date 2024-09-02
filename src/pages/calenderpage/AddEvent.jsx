@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import "./AddEvent.css";
 import { AppContext } from "../../utils/AppContext";
 import { useNavigate } from "react-router-dom";
+import { Snackbar } from "@mui/material";
 
 function EventForm({ selectedEvent, setSelectedEvent }) {
   const [title, setTitle] = useState("");
@@ -9,6 +10,19 @@ function EventForm({ selectedEvent, setSelectedEvent }) {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [error, setError] = useState("");
+
+  //snackbar open
+  const [snackbarOpen, setSnackbarOpen] = useState(false)
+  // snackbar message
+  const [snackbarMessage, setSnackbarMessage] = useState('')
+  // snackbar close
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setSnackbarOpen(false);
+  };
 
   const [eventError, setEventError] = useState({});
 
@@ -105,7 +119,7 @@ function EventForm({ selectedEvent, setSelectedEvent }) {
         .then((response) => {
           // Handle the response data
           console.log("Task created successfully:");
-          
+
           // event data for updating the event state
       const event_data = {
         id: response.data.id,
@@ -113,6 +127,12 @@ function EventForm({ selectedEvent, setSelectedEvent }) {
         start: new Date(`${response.data.date} ${response.data.start}`),
         end: new Date(`${response.data.date} ${response.data.end}` + ":00"),
       };
+      // toast message showing
+      setSnackbarOpen(true)
+      // snackbar message
+      setSnackbarMessage("Event created successfully");
+    
+
           setEvents([...events, event_data]);
 
           // reset event form by clearing and deselect selected event
@@ -144,6 +164,14 @@ function EventForm({ selectedEvent, setSelectedEvent }) {
 
   return (
     <form>
+       <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        open={snackbarOpen}
+        autoHideDuration={2000}
+        onClose={handleClose}
+        message={snackbarMessage}
+        key={'top' + 'center'}
+      />
       <div>
         <label>Title:</label>
         <input
