@@ -28,8 +28,8 @@ function AppProvider({ children }) {
     localStorage.getItem("token") && localStorage.removeItem("token")
     authToken && setAuthToken(null)
 
-    localStorage.getItem("refresh") && localStorage.removeItem("refresh")
-    refreshToken && setRefreshToken(null)
+    // localStorage.getItem("refresh") && localStorage.removeItem("refresh")
+    // refreshToken && setRefreshToken(null)
   }
  
   const logout = () => {

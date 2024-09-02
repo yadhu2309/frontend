@@ -21,13 +21,12 @@ const Login = () => {
     email: email,
     password: password,
    }).then((response)=>{
-    console.log(response.data)
     if(response.status === 200){
 
       localStorage.setItem('token', response.data.access)
-      localStorage.setItem('refresh', response.data.refresh)
+      // localStorage.setItem('refresh', response.data.refresh)
       setAuthToken(response.data.access)
-      setRefreshToken(response.data.refresh)
+      // setRefreshToken(response.data.refresh)
       
       navigate('/')
     }

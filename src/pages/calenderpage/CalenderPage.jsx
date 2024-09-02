@@ -26,6 +26,7 @@ function Calender() {
   // // Handle event
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
+    console.log('selected ', event)
     handleOpen();
     // const eventUpdate = events.map(evnt=>
     //   evnt.id === event.id ? {...evnt, completed: true}: evnt

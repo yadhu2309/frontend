@@ -37,6 +37,7 @@ export default function EventModal({
 
   const handleConfirm = async () => {
     // data to send the patch request
+    console.log('selected event',selectedEvent)
     let data = {
         completed: true
     }

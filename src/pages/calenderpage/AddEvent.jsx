@@ -97,19 +97,22 @@ function EventForm({ selectedEvent, setSelectedEvent }) {
         end: endTime,
       };
 
-      // event data for updating the event state
-      const event_data = {
-        title: data.title,
-        start: new Date(`${data.date} ${data.start}` + ":00"),
-        end: new Date(`${data.date} ${data.end}` + ":00"),
-      };
+      
 
       // Making the POST request
       client
         .post("/tasks/", data, config)
         .then((response) => {
           // Handle the response data
-          console.log("Task created successfully:", response.data);
+          console.log("Task created successfully:");
+          
+          // event data for updating the event state
+      const event_data = {
+        id: response.data.id,
+        title: response.data.title,
+        start: new Date(`${response.data.date} ${response.data.start}`),
+        end: new Date(`${response.data.date} ${response.data.end}` + ":00"),
+      };
           setEvents([...events, event_data]);
 
           // reset event form by clearing and deselect selected event
